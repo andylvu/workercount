@@ -5,7 +5,7 @@ from pynput.mouse import Listener, Button
 import time
 
 class WorkerCounterApp:
-    def __init__(self):
+    def _init__(self):
         # initialize variables and thresholds
         self.threshold_minerals = 0.15
         self.threshold_scv = 0.2
@@ -39,7 +39,6 @@ class WorkerCounterApp:
         # initialize mouse listener
         self.mouse_listener = Listener(on_click=self.on_click)
         self.mouse_listener.start()
-
 
     def on_click(self, x, y, button, pressed):
         if button == Button.right and pressed:
@@ -92,12 +91,12 @@ class WorkerCounterApp:
                     cv2.rectangle(current_frame, pt_candidate, bottom_right, (0, 255, 0), 2)
             
                 # check for the mouse inside the green rectangle
-                    if pt_candidate[0] <= adj_mouse_x <= pt_candidate[0] + self.template_width1 and \
-                        pt_candidate[1] <= mouse_y <= pt_candidate[1] + self.template_height1:
-                        self.mouse_in_green = True
-                        break
-                    else:
-                        self.mouse_in_green = False
+                if pt_candidate[0] <= adj_mouse_x <= pt_candidate[0] + self.template_width1 and \
+                    pt_candidate[1] <= mouse_y <= pt_candidate[1] + self.template_height1:
+                    self.mouse_in_green = True
+                    break
+                else:
+                    self.mouse_in_green = False
         
                 if self.mouse_in_green and self.right_click == True:
                     self.working_count += self.scv + self.scv_multi
@@ -125,7 +124,3 @@ class WorkerCounterApp:
 
         # Close any open windows
         cv2.destroyAllWindows()
-
-if __name__ == '__main__':
-    app = WorkerCounterApp()
-    app.main()

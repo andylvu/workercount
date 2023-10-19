@@ -5,7 +5,7 @@ from pynput.mouse import Listener, Button
 import time
 
 class WorkerCounterApp:
-    def __init__(self):
+    def _init__(self):
         # initialize variables and thresholds
         self.threshold_minerals = 0.15
         self.threshold_scv = 0.2
@@ -36,10 +36,10 @@ class WorkerCounterApp:
         self.template_width2, self.template_height2 = self.scv_pic.shape[::-1]  
         self.template_width3, self.template_height3 = self.scv_multi_pic.shape[::-1]  
 
+
         # initialize mouse listener
         self.mouse_listener = Listener(on_click=self.on_click)
         self.mouse_listener.start()
-
 
     def on_click(self, x, y, button, pressed):
         if button == Button.right and pressed:
@@ -76,56 +76,52 @@ class WorkerCounterApp:
                 result3 = cv2.matchTemplate(gray_lower, self.scv_multi_pic, cv2.TM_SQDIFF_NORMED)
                 loc3 = np.where(result3 <= self.threshold_scv_multi)
 
-                # get mouse coordinates
-                mouse_x, mouse_y = pyautogui.position()
-                adj_mouse_x = mouse_x - 320
+        # get mouse coordinates
+        mouse_x, mouse_y = pyautogui.position()
+        adj_mouse_x = mouse_x - 320
 
-                # update count for the scv
-                self.scv = len(loc2[0])
+        # update count for the scv
+        scv = len(loc2[0])
 
-                # update count for the scv_multi
-                self.scv_multi = len(loc3[0])
+        # update count for the scv_multi
+        scv_multi = len(loc3[0])
 
-                # Draw rectangles around the matched regions for the minerals
-                for pt_candidate in zip(*loc1[::-1]):
-                    bottom_right = (pt_candidate[0] + self.template_width1, pt_candidate[1] + self.template_height1)
-                    cv2.rectangle(current_frame, pt_candidate, bottom_right, (0, 255, 0), 2)
+        # Draw rectangles around the matched regions for the minerals
+        for pt_candidate in zip(*loc1[::-1]):
+            bottom_right = (pt_candidate[0] + template_width1, pt_candidate[1] + template_height1)
+            cv2.rectangle(current_frame, pt_candidate, bottom_right, (0, 255, 0), 2)
             
-                # check for the mouse inside the green rectangle
-                    if pt_candidate[0] <= adj_mouse_x <= pt_candidate[0] + self.template_width1 and \
-                        pt_candidate[1] <= mouse_y <= pt_candidate[1] + self.template_height1:
-                        self.mouse_in_green = True
-                        break
-                    else:
-                        self.mouse_in_green = False
-        
-                if self.mouse_in_green and self.right_click == True:
-                    self.working_count += self.scv + self.scv_multi
-                    time.sleep(0.25)
-
-                if self.right_click == True:
-                    self.right_clicks += 1
-            
-                # Display the processed frame (optional)
-                resized_frame = cv2.resize(current_frame, (1280, 720))
-                cv2.imshow("Live Desktop Video", resized_frame)
-
-                print(self.scv, "scv count")
-                print(self.scv_multi, "multi scv count")
-                print(self.working_count, 'working count')
-                print(self.right_clicks, 'right clicks')
-                print()
-
-                # Stop displaying when 'q' key is pressed
-                if cv2.waitKey(1) == ord("q"):
-                    break
-
-            except KeyboardInterrupt:
+            # check for the mouse inside the green rectangle
+            if pt_candidate[0] <= adj_mouse_x <= pt_candidate[0] + template_width1 and \
+                pt_candidate[1] <= mouse_y <= pt_candidate[1] + template_height1:
+                mouse_in_green = True
                 break
+            else:
+                mouse_in_green = False
+        
+        if mouse_in_green and right_click == True:
+            working_count += scv + scv_multi
+            time.sleep(0.25)
 
-        # Close any open windows
-        cv2.destroyAllWindows()
+        if right_click == True:
+            right_clicks += 1
+            
+        # Display the processed frame (optional)
+        resized_frame = cv2.resize(current_frame, (1280, 720))
+        cv2.imshow("Live Desktop Video", resized_frame)
 
-if __name__ == '__main__':
-    app = WorkerCounterApp()
-    app.main()
+        print(scv, "scv count")
+        print(scv_multi, "multi scv count")
+        print(working_count, 'working count')
+        print(right_clicks, 'right clicks')
+        print()
+
+        # Stop displaying when 'q' key is pressed
+        if cv2.waitKey(1) == ord("q"):
+            break
+
+    except KeyboardInterrupt:
+        break
+
+# Close any open windows
+cv2.destroyAllWindows()

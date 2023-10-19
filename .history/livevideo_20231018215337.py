@@ -92,12 +92,12 @@ class WorkerCounterApp:
                     cv2.rectangle(current_frame, pt_candidate, bottom_right, (0, 255, 0), 2)
             
                 # check for the mouse inside the green rectangle
-                    if pt_candidate[0] <= adj_mouse_x <= pt_candidate[0] + self.template_width1 and \
-                        pt_candidate[1] <= mouse_y <= pt_candidate[1] + self.template_height1:
-                        self.mouse_in_green = True
-                        break
-                    else:
-                        self.mouse_in_green = False
+                if pt_candidate[0] <= adj_mouse_x <= pt_candidate[0] + self.template_width1 and \
+                    pt_candidate[1] <= mouse_y <= pt_candidate[1] + self.template_height1:
+                    self.mouse_in_green = True
+                    break
+                else:
+                    self.mouse_in_green = False
         
                 if self.mouse_in_green and self.right_click == True:
                     self.working_count += self.scv + self.scv_multi
